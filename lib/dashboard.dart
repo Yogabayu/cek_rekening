@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:dio/dio.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -28,31 +27,13 @@ class _DashboardState extends State<Dashboard> {
     fetchDataBank();
   }
 
-  // Future<void> fetchDataBank() async {
-  //   try {
-  //     final response = await http.get(
-  //       Uri.parse('https://cekrekening.id/master/bank?enablePage=0'),
-  //     );
-  //     if (response.statusCode == 200) {
-  //       final jsonData = jsonDecode(response.body);
-  //       setState(() {
-  //         bankData = Bank_model.fromJson(jsonData);
-  //       });
-  //     } else {
-  //       print('Failed to fetch data. Status code: ${response.statusCode}');
-  //     }
-  //   } catch (e) {
-  //     print('Error during API request: $e');
-  //   }
-  // }
-
   Future<void> fetchDataBank() async {
     try {
-      final response =
-          await Dio().get('https://cekrekening.id/master/bank?enablePage=0');
-
+      final response = await http.get(
+        Uri.parse('https://cekrekening.id/master/bank?enablePage=0'),
+      );
       if (response.statusCode == 200) {
-        final jsonData = response.data;
+        final jsonData = jsonDecode(response.body);
         setState(() {
           bankData = Bank_model.fromJson(jsonData);
         });
@@ -97,14 +78,6 @@ class _DashboardState extends State<Dashboard> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-              // padding: EdgeInsets.only(bottom: width * 0.01),
-              // margin: EdgeInsets.symmetric(
-              //     horizontal: height * 0.5, vertical: width * 0.02),
-              // decoration: BoxDecoration(
-              //   border: Border.all(
-              //       color: Colors.black, width: 5.0, style: BorderStyle.solid),
-              //   borderRadius: BorderRadius.circular(20),
-              // ),
               child: Column(
                 children: [
                   SizedBox(
