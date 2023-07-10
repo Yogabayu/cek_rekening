@@ -30,8 +30,11 @@ class _DashboardState extends State<Dashboard> {
   Future<void> fetchDataBank() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cekrekening.id/master/bank?enablePage=0'),
-      );
+          Uri.parse(
+              'https://proxy.cors.sh/https://cekrekening.id/master/bank?enablePage=0'),
+          headers: {
+            'x-cors-api-key': 'temp_3deea5aa97ca4319c894ab1b223cfc3f',
+          });
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
         setState(() {
@@ -48,8 +51,11 @@ class _DashboardState extends State<Dashboard> {
   Future<void> fetchDataRekening(idBank, noRek) async {
     try {
       final response = await http.post(
-        Uri.parse('https://cekrekening.id/master/cekrekening/report'),
-        headers: {'Content-Type': 'application/json'},
+        Uri.parse(
+            'https://proxy.cors.sh/https://cekrekening.id/master/cekrekening/report'),
+        headers: {
+          'x-cors-api-key': 'temp_3deea5aa97ca4319c894ab1b223cfc3f',
+        },
         body: jsonEncode({"bankId": idBank, "bankAccountNumber": noRek}),
       );
       if (response.statusCode == 200) {
