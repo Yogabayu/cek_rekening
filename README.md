@@ -8,7 +8,12 @@ Install my-project with git
   git clone https://github.com/Yogabayu/cek_rekening.git
 
   flutter pub get
+
+  flutter run -d chrome --web-flags="--disable-web-security"
+
 ```
+
+aplikasi ini hanya berjalan baik untuk development ketika running di production (cpanel dll) akan error CORS
 
 ## Acknowledgements
 
