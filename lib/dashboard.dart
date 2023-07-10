@@ -54,9 +54,12 @@ class _DashboardState extends State<Dashboard> {
         Uri.parse(
             'https://proxy.cors.sh/https://cekrekening.id/master/cekrekening/report'),
         headers: {
+          'Content-Type': 'application/json',
           'x-cors-api-key': 'temp_3deea5aa97ca4319c894ab1b223cfc3f',
         },
-        body: jsonEncode({"bankId": idBank, "bankAccountNumber": noRek}),
+        body: jsonEncode(
+          {"bankId": idBank, "bankAccountNumber": noRek},
+        ),
       );
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
@@ -64,12 +67,12 @@ class _DashboardState extends State<Dashboard> {
           hasilData = Hasil_model.fromJson(jsonData);
           isSuccess = true;
         });
-        // print(hasilData!.status);
       } else {
         print('Failed to fetch data. Status code: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error during API request: $e');
+      // print('Error during API request: $e');
+      debugPrint('Error during API request: $e');
     }
   }
 
