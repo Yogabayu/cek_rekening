@@ -22,8 +22,11 @@ aplikasi ini hanya berjalan baik untuk development ketika running di production 
 
 
 ## Screenshots
+- success get data
+![App Screenshot](https://github.com/Yogabayu/cek_rekening/blob/main/success.png)
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+- error get data
+![App Screenshot](https://github.com/Yogabayu/cek_rekening/blob/main/notfound.png)
 
 
 ## Demo
