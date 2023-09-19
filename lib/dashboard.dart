@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 // import 'package:cek_rekening/bank_model.dart';
-import 'package:cek_rekening/bank_model.dart';
+// import 'package:cek_rekening/bank_model.dart';
 import 'package:cek_rekening/hasil_model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -15,8 +15,24 @@ class Dashboard extends StatefulWidget {
   _DashboardState createState() => _DashboardState();
 }
 
+class Bank {
+  String id;
+  String namaBank;
+
+  Bank({required this.id, required this.namaBank});
+
+  factory Bank.fromJson(Map<String, dynamic> json) {
+    return Bank(
+      id: json['id'] ?? '',
+      namaBank: json['nama_bank'] ?? '',
+    );
+  }
+}
+
 class _DashboardState extends State<Dashboard> {
-  Bank_model? bankData;
+  // Bank_model? bankData;
+  List<dynamic>? bankDataNew;
+  List<Bank>? bankData;
   Hasil_model? hasilData;
   bool isSuccess = false;
   var idBank, bankAccountNumber;
@@ -27,53 +43,95 @@ class _DashboardState extends State<Dashboard> {
     fetchDataBank();
   }
 
+  // Future<void> fetchDataBank() async {
+  //   try {
+  //     final response = await http.get(
+  //         Uri.parse(
+  //             'https://proxy.cors.sh/https://cekrekening.id/master/bank?enablePage=0'),
+  //         headers: {
+  //           'x-cors-api-key': 'temp_3deea5aa97ca4319c894ab1b223cfc3f',
+  //         });
+  //     if (response.statusCode == 200) {
+  //       final jsonData = jsonDecode(response.body);
+  //       setState(() {
+  //         bankData = Bank_model.fromJson(jsonData);
+  //       });
+  //     } else {
+  //       print('Failed to fetch data. Status code: ${response.statusCode}');
+  //     }
+  //   } catch (e) {
+  //     print('Error during API request: $e');
+  //   }
+  // }
+
   Future<void> fetchDataBank() async {
+    final url = Uri.parse("https://cors-proxy1.p.rapidapi.com/v1");
+    final headers = {
+      "content-type": "application/json",
+      "X-RapidAPI-Key": "ce9e696f65msh1a41eb6a04f0d44p1ede58jsn893762cf7008",
+      "X-RapidAPI-Host": "cors-proxy1.p.rapidapi.com",
+    };
+    final requestBody = {
+      "url": "https://cekrekening.id/api/v1/bank",
+      "method": "POST",
+      "params": {},
+      "data": {},
+      "json_data": {},
+      "headers": {},
+      "cookies": {},
+    };
+
     try {
-      final response = await http.get(
-          Uri.parse(
-              'https://proxy.cors.sh/https://cekrekening.id/master/bank?enablePage=0'),
-          headers: {
-            'x-cors-api-key': 'temp_3deea5aa97ca4319c894ab1b223cfc3f',
-          });
-      if (response.statusCode == 200) {
-        final jsonData = jsonDecode(response.body);
-        setState(() {
-          bankData = Bank_model.fromJson(jsonData);
-        });
-      } else {
-        print('Failed to fetch data. Status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error during API request: $e');
+      final response = await http.post(
+        url,
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      final result = jsonDecode(response.body);
+      setState(() {
+        bankDataNew = result['payload']['data']['bank'];
+        bankData = bankDataNew?.map((jsonBank) {
+          if (jsonBank is Map<String, dynamic>) {
+            return Bank.fromJson(jsonBank);
+          } else {
+            return Bank(id: '', namaBank: '');
+          }
+        }).toList();
+      });
+      // print(result['payload']['data']['bank']);
+    } catch (error) {
+      print(error);
     }
   }
 
   Future<void> fetchDataRekening(idBank, noRek) async {
-    try {
-      final response = await http.post(
-        Uri.parse(
-            'https://proxy.cors.sh/https://cekrekening.id/master/cekrekening/report'),
-        headers: {
-          'Content-Type': 'application/json',
-          'x-cors-api-key': 'temp_3deea5aa97ca4319c894ab1b223cfc3f',
-        },
-        body: jsonEncode(
-          {"bankId": idBank, "bankAccountNumber": noRek},
-        ),
-      );
-      if (response.statusCode == 200) {
-        final jsonData = jsonDecode(response.body);
-        setState(() {
-          hasilData = Hasil_model.fromJson(jsonData);
-          isSuccess = true;
-        });
-      } else {
-        print('Failed to fetch data. Status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      // print('Error during API request: $e');
-      debugPrint('Error during API request: $e');
-    }
+    print(
+        "data kominfo diproteksi ulang jadi ada guard captha yg lumayan sulit ditembus tanpa phyton. so this project is finished");
+    // try {
+    //   final response = await http.post(
+    //     Uri.parse(
+    //         'https://proxy.cors.sh/https://cekrekening.id/master/cekrekening/report'),
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       'x-cors-api-key': 'temp_3deea5aa97ca4319c894ab1b223cfc3f',
+    //     },
+    //     body: jsonEncode(
+    //       {"bankId": idBank, "bankAccountNumber": noRek},
+    //     ),
+    //   );
+    //   if (response.statusCode == 200) {
+    //     final jsonData = jsonDecode(response.body);
+    //     setState(() {
+    //       hasilData = Hasil_model.fromJson(jsonData);
+    //       isSuccess = true;
+    //     });
+    //   } else {
+    //     print('Failed to fetch data. Status code: ${response.statusCode}');
+    //   }
+    // } catch (e) {
+    //   // print('Error during API request: $e');
+    //   debugPrint('Error during API request: $e');
+    // }
   }
 
   @override
@@ -139,10 +197,16 @@ class _DashboardState extends State<Dashboard> {
                     height: height * 0.16,
                     child: DropdownButtonFormField<String>(
                       value: idBank,
-                      items: bankData?.data?.content?.map((option) {
+                      // items: bankData?.payload?.data?.bank?.map((option) {
+                      //   return DropdownMenuItem<String>(
+                      //     value: option.id.toString(),
+                      //     child: Text(option.namaBank!),
+                      //   );
+                      // }).toList(),
+                      items: bankData?.map((option) {
                         return DropdownMenuItem<String>(
                           value: option.id.toString(),
-                          child: Text(option.bankName!),
+                          child: Text(option.namaBank),
                         );
                       }).toList(),
                       onChanged: (newValue) {

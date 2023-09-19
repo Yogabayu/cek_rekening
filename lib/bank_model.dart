@@ -1,23 +1,43 @@
 class Bank_model {
-  bool? status;
-  String? code;
-  String? message;
-  Data? data;
+  int? statusCode;
+  Payload? payload;
 
-  Bank_model({this.status, this.code, this.message, this.data});
+  Bank_model({this.statusCode, this.payload});
 
   Bank_model.fromJson(Map<String, dynamic> json) {
-    status = json['status'];
-    code = json['code'];
-    message = json['message'];
+    if (json['status_code'] is String) {
+      statusCode = int.tryParse(json['status_code']);
+    } else {
+      statusCode = json['status_code'];
+    }
+    payload =
+        json['payload'] != null ? new Payload.fromJson(json['payload']) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['status_code'] = this.statusCode;
+    if (this.payload != null) {
+      data['payload'] = this.payload!.toJson();
+    }
+    return data;
+  }
+}
+
+class Payload {
+  bool? success;
+  Data? data;
+
+  Payload({this.success, this.data});
+
+  Payload.fromJson(Map<String, dynamic> json) {
+    success = json['success'];
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['code'] = this.code;
-    data['message'] = this.message;
+    data['success'] = this.success;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
@@ -26,138 +46,81 @@ class Bank_model {
 }
 
 class Data {
-  List<Content>? content;
-  String? pageable;
-  int? totalPages;
-  int? totalElements;
-  bool? last;
-  int? number;
-  Sort? sort;
-  int? size;
-  int? numberOfElements;
-  bool? first;
-  bool? empty;
+  List<Types>? types;
+  List<Bank>? bank;
 
-  Data(
-      {this.content,
-      this.pageable,
-      this.totalPages,
-      this.totalElements,
-      this.last,
-      this.number,
-      this.sort,
-      this.size,
-      this.numberOfElements,
-      this.first,
-      this.empty});
+  Data({this.types, this.bank});
 
   Data.fromJson(Map<String, dynamic> json) {
-    if (json['content'] != null) {
-      content = <Content>[];
-      json['content'].forEach((v) {
-        content!.add(new Content.fromJson(v));
+    if (json['types'] != null) {
+      types = <Types>[];
+      json['types'].forEach((v) {
+        types!.add(new Types.fromJson(v));
       });
     }
-    pageable = json['pageable'];
-    totalPages = json['totalPages'];
-    totalElements = json['totalElements'];
-    last = json['last'];
-    number = json['number'];
-    sort = json['sort'] != null ? new Sort.fromJson(json['sort']) : null;
-    size = json['size'];
-    numberOfElements = json['numberOfElements'];
-    first = json['first'];
-    empty = json['empty'];
+    if (json['bank'] != null) {
+      bank = <Bank>[];
+      json['bank'].forEach((v) {
+        bank!.add(new Bank.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.content != null) {
-      data['content'] = this.content!.map((v) => v.toJson()).toList();
+    if (types != null) {
+      data['types'] = types!.map((v) => v.toJson()).toList();
     }
-    data['pageable'] = this.pageable;
-    data['totalPages'] = this.totalPages;
-    data['totalElements'] = this.totalElements;
-    data['last'] = this.last;
-    data['number'] = this.number;
-    if (this.sort != null) {
-      data['sort'] = this.sort!.toJson();
+    if (bank != null) {
+      data['bank'] = bank!.map((v) => v.toJson()).toList();
     }
-    data['size'] = this.size;
-    data['numberOfElements'] = this.numberOfElements;
-    data['first'] = this.first;
-    data['empty'] = this.empty;
     return data;
   }
 }
 
-class Content {
+class Types {
   int? id;
-  String? bankName;
-  String? information;
-  String? pathLogoColor;
-  String? pathLogoBlack;
-  int? tipebank;
-  String? prefix;
-  String? createdAt;
-  bool? status;
+  String? deskripsi;
+  String? select;
+  String? numbers;
+  String? label;
 
-  Content(
-      {this.id,
-      this.bankName,
-      this.information,
-      this.pathLogoColor,
-      this.pathLogoBlack,
-      this.tipebank,
-      this.prefix,
-      this.createdAt,
-      this.status});
+  Types({this.id, this.deskripsi, this.select, this.numbers, this.label});
 
-  Content.fromJson(Map<String, dynamic> json) {
+  Types.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    bankName = json['bankName'];
-    information = json['information'];
-    pathLogoColor = json['pathLogoColor'];
-    pathLogoBlack = json['pathLogoBlack'];
-    tipebank = json['tipebank'];
-    prefix = json['prefix'];
-    createdAt = json['createdAt'];
-    status = json['status'];
+    deskripsi = json['deskripsi'];
+    select = json['select'];
+    numbers = json['numbers'];
+    label = json['label'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    data['bankName'] = this.bankName;
-    data['information'] = this.information;
-    data['pathLogoColor'] = this.pathLogoColor;
-    data['pathLogoBlack'] = this.pathLogoBlack;
-    data['tipebank'] = this.tipebank;
-    data['prefix'] = this.prefix;
-    data['createdAt'] = this.createdAt;
-    data['status'] = this.status;
+    data['deskripsi'] = this.deskripsi;
+    data['select'] = this.select;
+    data['numbers'] = this.numbers;
+    data['label'] = this.label;
     return data;
   }
 }
 
-class Sort {
-  bool? sorted;
-  bool? unsorted;
-  bool? empty;
+class Bank {
+  int? id;
+  String? namaBank;
 
-  Sort({this.sorted, this.unsorted, this.empty});
+  Bank({this.id, this.namaBank});
 
-  Sort.fromJson(Map<String, dynamic> json) {
-    sorted = json['sorted'];
-    unsorted = json['unsorted'];
-    empty = json['empty'];
+  Bank.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    namaBank = json['nama_bank'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['sorted'] = this.sorted;
-    data['unsorted'] = this.unsorted;
-    data['empty'] = this.empty;
+    data['id'] = this.id;
+    data['nama_bank'] = this.namaBank;
     return data;
   }
 }
